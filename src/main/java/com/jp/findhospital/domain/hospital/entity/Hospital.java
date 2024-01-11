@@ -1,10 +1,13 @@
 package com.jp.findhospital.domain.hospital.entity;
 
+import com.jp.findhospital.domain.comment.entity.Comment;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Entity
 @Table(name = "Hospital")
@@ -47,6 +50,6 @@ public class Hospital {
     @Column(name="y")
     private Float y;
 
-
-
+    @OneToMany(mappedBy = "hospital" , fetch = FetchType.LAZY)
+    private List<Comment> commentList;
 }
