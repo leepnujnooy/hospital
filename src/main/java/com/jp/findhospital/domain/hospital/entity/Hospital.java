@@ -1,12 +1,11 @@
 package com.jp.findhospital.domain.hospital.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jp.findhospital.domain.comment.entity.Comment;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -15,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Builder
+@ToString
 public class Hospital {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,6 +50,8 @@ public class Hospital {
     @Column(name="y")
     private Float y;
 
-    @OneToMany(mappedBy = "hospital" , fetch = FetchType.LAZY)
+    //hospital 단일 조회시 json 형식의 comment는 보지 않기 위함
+    @JsonIgnore
+    @OneToMany(mappedBy = "hospital")
     private List<Comment> commentList;
 }
