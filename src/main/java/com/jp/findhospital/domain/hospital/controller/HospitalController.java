@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -21,7 +20,7 @@ public class HospitalController {
     private final CommentService commentService;
 
     //전체 병원 조회
-    @GetMapping("/search")
+    @GetMapping("/hospitals")
     public ResponseEntity<List<Hospital>> getHospitalAll(){
 
         List<Hospital> hospitalList = hospitalService.getHospitalAll();
@@ -29,8 +28,8 @@ public class HospitalController {
         return ResponseEntity.status(200).body(hospitalList);
     }
 
-    //단일 병원 조회 (id로)
-    @GetMapping("/search/{id}")
+    //단일 병원 조회
+    @GetMapping("/hospital/{id}")
     public ResponseEntity<Hospital> getHospital(@PathVariable("id") Long id){
 
         Hospital hospital = hospitalService.getHospitalById(id);
@@ -38,7 +37,24 @@ public class HospitalController {
         return ResponseEntity.status(200).body(hospital);
     }
 
-    //시도별 병원 조회
+
+    //단일 병원 검색 (이름으로)
+    @GetMapping("/search")
+    public ResponseEntity<List<Hospital>> getHospitalByName(@RequestParam String name){
+        List<Hospital> hospitalList = hospitalService.getHospital(name);
+
+        return ResponseEntity.status(200).body(hospitalList);
+    }
+
+
+    //시도별 병원 검색
+    @GetMapping("/search/location")
+    public ResponseEntity<List<Hospital>> getHospitalBySido(@RequestParam String sido){
+        List<Hospital> hospitalList = hospitalService.getHospitalBySido(sido);
+
+        return ResponseEntity.status(200).body(hospitalList);
+    }
+
 
 
 

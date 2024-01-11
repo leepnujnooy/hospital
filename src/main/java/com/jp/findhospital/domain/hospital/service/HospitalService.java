@@ -33,8 +33,8 @@ public class HospitalService {
     }
 
     //이름으로 단일 병원 조회
-    public Hospital getHospital(String hospitalName){
-        Optional<Hospital> optionalHospital = hospitalRepository.findByHospitalName(hospitalName);
+    public List<Hospital> getHospital(String hospitalName){
+        Optional<List<Hospital>> optionalHospital = hospitalRepository.findByHospitalName(hospitalName);
 
         if(optionalHospital.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
 
@@ -43,7 +43,7 @@ public class HospitalService {
 
     //시도별 병원 조회
     public List<Hospital> getHospitalBySido(String siDo){
-        Optional<List<Hospital>> optionalHospitals = hospitalRepository.findAllBySiDo(siDo);
+        Optional<List<Hospital>> optionalHospitals = hospitalRepository.findAllBySiDoContaining(siDo);
 
         if(optionalHospitals.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
 
