@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="comment")
@@ -23,12 +24,12 @@ public class Comment {
     private String text;
 
     @Column
-    private Timestamp timestamp;
+    private LocalDateTime dateTime;
 
 
     //comment 검색시 hospital 은 나오지않게 ignore
     @JsonIgnore
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     @JoinColumn(name = "hospital_id")
     private Hospital hospital;
 }

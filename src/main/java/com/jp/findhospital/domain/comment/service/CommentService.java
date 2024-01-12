@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -26,11 +27,14 @@ public class CommentService {
         Hospital hospital = hospitalRepository.findById(hospitalId)
                 .orElseThrow(RuntimeException::new);
 
+        //댓글위치 == 병원위치 다르면 예외처리
+        if(!hospitalId.equals(commentDto.getHospitalId())) throw new RuntimeException();
+
         //저장
         commentRepository.save(Comment.builder()
                         .text(commentDto.getText())
                         .hospital(hospital)
-                        .timestamp(new Timestamp(System.currentTimeMillis()))
+                        .dateTime(LocalDateTime.now())
                         .build());
     }
 

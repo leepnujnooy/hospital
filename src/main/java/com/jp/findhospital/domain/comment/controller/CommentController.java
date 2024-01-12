@@ -38,7 +38,7 @@ public class CommentController {
     }
 
     //댓글 전체보기
-    @GetMapping("/hospital/{hospitalId}/comments")
+    @GetMapping("/hospital/{hospitalId}/comment")
     public ResponseEntity<List<Comment>> getCommentAll(@PathVariable("hospitalId")Long id){
         List<Comment> commentList = commentService.getCommentAll(id);
         return ResponseEntity.status(200).body(commentList);
