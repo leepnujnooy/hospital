@@ -39,7 +39,7 @@ public class HospitalController {
 
 
     //단일 병원 검색 (이름으로)
-    @GetMapping("/search")
+    @GetMapping("/search/name")
     public ResponseEntity<List<Hospital>> getHospitalByName(@RequestParam String name){
         List<Hospital> hospitalList = hospitalService.getHospital(name);
 
@@ -48,14 +48,28 @@ public class HospitalController {
 
 
     //시도별 병원 검색
-    @GetMapping("/search/location")
-    public ResponseEntity<List<Hospital>> getHospitalBySido(@RequestParam String sido){
-        List<Hospital> hospitalList = hospitalService.getHospitalBySido(sido);
+    @GetMapping("/search/province")
+    public ResponseEntity<List<Hospital>> getHospitalByProvince(@RequestParam String province){
+        List<Hospital> hospitalList = hospitalService.getHospitalBySido(province);
 
         return ResponseEntity.status(200).body(hospitalList);
     }
 
+    //시군구별 병원 검색
+    @GetMapping("/search/city")
+    public ResponseEntity<List<Hospital>> getHospitalByCity(@RequestParam String city){
+        List<Hospital> hospitalList = hospitalService.getHospitalBySiGunGu(city);
 
+        return ResponseEntity.status(200).body(hospitalList);
+    }
+
+    //병원타입별 병원 검색
+    @GetMapping("/search/type")
+    public ResponseEntity<List<Hospital>> getHospitalByType(@RequestParam String type){
+        List<Hospital> hospitalList = hospitalService.getHospitalByType(type);
+
+        return ResponseEntity.status(200).body(hospitalList);
+    }
 
 
 

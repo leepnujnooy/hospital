@@ -17,7 +17,7 @@ public interface HospitalRepository extends JpaRepository<Hospital, Long> {
     Optional<List<Hospital>> findAllBySiDoContaining(String sido);
 
     //시군구별 병원 조회
-    @Query("SELECT a FROM Hospital a WHERE a.siGunGu = :siGunGu")
+    @Query("SELECT a FROM Hospital a WHERE a.siGunGu LIKE :siGunGu%")
     Optional<List<Hospital>> findAllBySiGunGuContaining(String siGunGu);
 
     //병원타입별 병원 조회

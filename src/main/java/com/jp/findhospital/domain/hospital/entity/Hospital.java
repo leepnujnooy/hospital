@@ -14,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Builder
-@ToString
 public class Hospital {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,8 +49,8 @@ public class Hospital {
     @Column(name="y")
     private Float y;
 
-    //hospital 단일 조회시 json 형식의 comment는 보지 않기 위함
-    @JsonIgnore
-    @OneToMany(mappedBy = "hospital")
+    //jsonIgnore == hospital 단일 조회시 json 형식의 comment 는 보지 않기 위한 어노테이션
+    //@JsonIgnore
+    @OneToMany(mappedBy = "hospital", fetch = FetchType.LAZY)
     private List<Comment> commentList;
 }

@@ -50,5 +50,22 @@ public class HospitalService {
         return optionalHospitals.get();
     }
 
+    //시도별 병원 조회
+    public List<Hospital> getHospitalBySiGunGu(String siGunGu){
+        Optional<List<Hospital>> optionalHospitals = hospitalRepository.findAllBySiGunGuContaining(siGunGu);
+
+        if(optionalHospitals.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
+
+        return optionalHospitals.get();
+    }
+
+    //병원타입별 병원 조회
+    public List<Hospital> getHospitalByType(String type){
+        Optional<List<Hospital>> optionalHospitals = hospitalRepository.findAllByHospitalType(type);
+
+        if(optionalHospitals.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
+
+        return optionalHospitals.get();
+    }
 
 }
