@@ -8,6 +8,7 @@ import com.jp.findhospital.domain.hospital.repository.HospitalRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -22,6 +23,7 @@ public class CommentService {
     private final HospitalRepository hospitalRepository;
 
 
+    @Transactional
     public void saveComment(Long hospitalId, SaveCommentRequestDto commentDto){
         //병원존재유무
         Hospital hospital = hospitalRepository.findById(hospitalId)
@@ -39,6 +41,7 @@ public class CommentService {
     }
 
 
+    @Transactional(readOnly = true)
     public List<Comment> getCommentAll(Long id){
         //hospitalId 로 찾기
         List<Comment> commentList = commentRepository.findAllByHospitalId(id);
