@@ -28,8 +28,8 @@ public class Hospital {
     @Column(name="si_do")
     private String siDo;
 
-    @Column(name="si_gun_gu")
-    private String siGunGu;
+    @Column(name="gun_gu")
+    private String gunGu;
 
     @Column(name="mail_number")
     private Integer mailNumber;
