@@ -17,7 +17,7 @@ public class HospitalResponseDto {
     private String hospitalName;
     private String hospitalType;
     private String siDo;
-    private String siGunGu;
+    private String gunGu;
     private Integer mailNumber;
     private String address;
     private String hospitalPhoneNumber;
@@ -33,6 +33,7 @@ public class HospitalResponseDto {
         responseDto.setAddress(hospital.getAddress());
         responseDto.setHospitalType(hospital.getHospitalType());
         responseDto.setSiDo(hospital.getSiDo());
+        responseDto.setGunGu(hospital.getGunGu());
         responseDto.setX(hospital.getX());
         responseDto.setY(hospital.getY());
         responseDto.setHospitalStartDate(hospital.getHospitalStartDate());

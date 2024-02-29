@@ -5,10 +5,7 @@ import com.jp.findhospital.domain.hospital.entity.Hospital;
 import com.jp.findhospital.domain.hospital.repository.HospitalRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,65 +22,139 @@ public class HospitalService {
 
     private final HospitalRepository hospitalRepository;
 
-    //hospital 객체엔
+    //id로 단일 병원 조회
+    public HospitalResponseDto getHospitalById(Long id){
+        Optional<Hospital> optionalHospital = hospitalRepository.findById(id);
+        if(optionalHospital.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
+        return HospitalResponseDto.entityToDto(optionalHospital.get());
+    }
 
     //병원 전체조회
-    public Page<HospitalResponseDto> getHospitalPaged(Integer page, Integer limit){
+    public Page<HospitalResponseDto> getHospitalAllWithPaged(Integer currentPage, Integer perPage){
 
         //페이지 request 를 정의
-        Pageable pageable = PageRequest.of(page, limit, Sort.by("id"));
-
+        Pageable pageable = PageRequest.of(currentPage, perPage, Sort.by("id"));
         Page<Hospital> hospitalPage = hospitalRepository.findAll(pageable);
 
         return hospitalPage.map(HospitalResponseDto::entityToDto);
     }
 
-    //id로 단일 병원 조회
-    public Hospital getHospitalById(Long id){
-        Optional<Hospital> optionalHospital = hospitalRepository.findById(id);
-
-        if(optionalHospital.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
-
-        return optionalHospital.get();
-    }
-
-    //이름으로 단일 병원 조회
-    public List<Hospital> getHospital(String hospitalName){
+    //병원이름으로 조회
+    public Page<HospitalResponseDto> getHospitalByName(String hospitalName){
         Optional<List<Hospital>> optionalHospital = hospitalRepository.findByHospitalName(hospitalName);
+//        if(optionalHospital.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
 
-        if(optionalHospital.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
+        // currentPage, perPage 추가 구현
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id"));
+        Page<Hospital> hospitalPage = new PageImpl<>(
+                optionalHospital.get(),
+                pageable,
+                optionalHospital.get().size());
 
-        return optionalHospital.get();
+        return hospitalPage.map(HospitalResponseDto::entityToDto);
     }
 
-    //시도별 병원 조회
-    public List<Hospital> getHospitalBySido(String siDo){
+    //시도 병원 조회
+    public Page<HospitalResponseDto> getHospitalBySido(String siDo){
         Optional<List<Hospital>> optionalHospitals = hospitalRepository.findAllBySiDoContaining(siDo);
+//        if(optionalHospitals.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
 
-        if(optionalHospitals.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
+        // currentPage, perPage 추가 구현
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id"));
+        Page<Hospital> hospitalPage = new PageImpl<>(
+                optionalHospitals.get(),
+                pageable,
+                optionalHospitals.get().size());
 
-        return optionalHospitals.get();
+        return hospitalPage.map(HospitalResponseDto::entityToDto);
     }
 
-    //시도별 병원 조회
-    public List<Hospital> getHospitalBySiGunGu(String siGunGu){
-        Optional<List<Hospital>> optionalHospitals = hospitalRepository.findAllBySiGunGuContaining(siGunGu);
 
-        if(optionalHospitals.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
+    //병원타입 필터만 거친 병원 조회
+    public Page<HospitalResponseDto> getHospitalByType(String hospitalType){
+        Optional<List<Hospital>> optionalHospitals = hospitalRepository.findAllByHospitalType(hospitalType);
+//        if(optionalHospitals.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
 
-        return optionalHospitals.get();
+        // currentPage, perPage 추가 구현
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id"));
+        Page<Hospital> hospitalPage = new PageImpl<>(
+                optionalHospitals.get(),
+                pageable,
+                optionalHospitals.get().size());
+
+        return hospitalPage.map(HospitalResponseDto::entityToDto);
     }
 
-    //병원타입별 병원 조회
-    public List<Hospital> getHospitalByType(String type){
-        Optional<List<Hospital>> optionalHospitals = hospitalRepository.findAllByHospitalType(type);
+    //2개이상의 조건이 붙은 병원 조회
+    public Page<HospitalResponseDto> getHospitalByCondition(
+            String hospitalName,
+            String hospitalType,
+            String siDo){
+        Optional<List<Hospital>> optionalHospitals = hospitalRepository.findCriteria(hospitalName,hospitalType,siDo);
+//        if(optionalHospitals.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
 
-        if(optionalHospitals.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
+        // currentPage, perPage 추가 구현
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id"));
+        Page<Hospital> hospitalPage = new PageImpl<>(
+                optionalHospitals.get(),
+                pageable,
+                optionalHospitals.get().size());
 
-        return optionalHospitals.get();
+        return hospitalPage.map(HospitalResponseDto::entityToDto);
     }
 
+
+    //조회 후 조건에 맞는 병원리스트 간추리는 메서드
+    public Page<HospitalResponseDto> getHospitals(
+            String hospitalType,
+            String hospitalName,
+            String siDo
+    ){
+
+        //경우의 수 =>
+        //1. 아무런 조건 없이 검색
+        if(hospitalName == null && hospitalType == null && siDo == null){
+            return getHospitalAllWithPaged(0,10);
+        }
+        //2. 병원타입 조건만 검색
+        else if(hospitalName == null && hospitalType != null && siDo == null){
+            return getHospitalByType(hospitalType);
+        }
+        //3. 시도 조건만 검색
+        else if(hospitalName == null && hospitalType == null && siDo != null){
+            return getHospitalBySido(siDo);
+        }
+        //4. 이름 조건만 검색
+        else if(hospitalName != null && hospitalType == null && siDo == null){
+            return getHospitalByName(hospitalName);
+        }
+        //5. 병원타입 , 시도 조건 검색
+        //6. 병원타입 , 이름 조건 검색
+        //7. 이름, 시도 조건 검색
+        else{
+            return getHospitalByCondition(hospitalName,hospitalType,siDo);
+//            return new PageImpl<>(new ArrayList<>());
+        }
+    }
 }
+
+
+
+
+
+//병원타입 , 시도 동시에 매핑
+//제일 많이 검색한 키워드
+//댓글
+//최근 작성한 댓글
+//대댓글
+//조회수 많은 병원
+//조회수
+//병원점수 5점만점
+
+
+
+
+
 //
 //        데이터 전달의 명확성과 일관성: DTO를 사용하면 데이터 전달이 명확하고 일관성 있게 이루어집니다.
 //        DTO는 특정 요청 또는 응답에 필요한 데이터만을 포함하므로,
