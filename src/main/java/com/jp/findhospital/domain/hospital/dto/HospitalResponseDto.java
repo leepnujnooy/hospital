@@ -24,6 +24,8 @@ public class HospitalResponseDto {
     private String hospitalStartDate;
     private Float x;
     private Float y;
+    private Integer hits;
+    private Float score;
 
     //엔티티에서 dto 변환시 사용하기
     public static HospitalResponseDto entityToDto(Hospital hospital){
@@ -39,6 +41,8 @@ public class HospitalResponseDto {
         responseDto.setHospitalStartDate(hospital.getHospitalStartDate());
         responseDto.setHospitalPhoneNumber(hospital.getHospitalPhoneNumber());
         responseDto.setMailNumber(hospital.getMailNumber());
+        responseDto.setHits(hospital.getHits());
+        responseDto.setScore(hospital.getScore());
 
         return responseDto;
     }

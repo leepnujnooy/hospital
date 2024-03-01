@@ -49,6 +49,16 @@ public class Hospital {
     @Column(name="y")
     private Float y;
 
+    @Column(name="hits" , columnDefinition = "INT DEFAULT 0")
+    private Integer hits;
+
+    @Column(name = "score" , columnDefinition = "FLOAT DEFAULT 0")
+    private Float score;
+
+    public void updateHits(){
+        this.hits = hits + 1;
+    }
+
     //jsonIgnore == hospital 단일 조회시 json 형식의 comment 는 보지 않기 위한 어노테이션
     //@JsonIgnore
     @OneToMany(mappedBy = "hospital", fetch = FetchType.LAZY)
