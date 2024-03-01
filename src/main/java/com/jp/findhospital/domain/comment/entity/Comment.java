@@ -24,6 +24,9 @@ public class Comment {
     private String text;
 
     @Column
+    private Integer score;
+
+    @Column
     private LocalDateTime dateTime;
 
 
