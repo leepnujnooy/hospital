@@ -56,7 +56,7 @@ public class HospitalService {
 
     //시도 병원 조회
     public Page<HospitalResponseDto> getHospitalBySido(String siDo){
-        Optional<List<Hospital>> optionalHospitals = hospitalRepository.findAllBySiDoContaining(siDo);
+        Optional<List<Hospital>> optionalHospitals = hospitalRepository.findBySiDo(siDo);
 //        if(optionalHospitals.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
 
         // currentPage, perPage 추가 구현
@@ -72,7 +72,7 @@ public class HospitalService {
 
     //병원타입 필터만 거친 병원 조회
     public Page<HospitalResponseDto> getHospitalByType(String hospitalType){
-        Optional<List<Hospital>> optionalHospitals = hospitalRepository.findAllByHospitalType(hospitalType);
+        Optional<List<Hospital>> optionalHospitals = hospitalRepository.findByHospitalType(hospitalType);
 //        if(optionalHospitals.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
 
         // currentPage, perPage 추가 구현
@@ -85,12 +85,63 @@ public class HospitalService {
         return hospitalPage.map(HospitalResponseDto::entityToDto);
     }
 
-    //2개이상의 조건이 붙은 병원 조회
-    public Page<HospitalResponseDto> getHospitalByCondition(
+    //병원이름, 병원타입
+    public Page<HospitalResponseDto> getHospitalsByNameAndType(
             String hospitalName,
+            String hospitalType){
+        Optional<List<Hospital>> optionalHospitals = hospitalRepository.findByNameAndType(hospitalName,hospitalType);
+//        if(optionalHospitals.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
+
+        // currentPage, perPage 추가 구현
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id"));
+        Page<Hospital> hospitalPage = new PageImpl<>(
+                optionalHospitals.get(),
+                pageable,
+                optionalHospitals.get().size());
+
+        return hospitalPage.map(HospitalResponseDto::entityToDto);
+    }
+
+    //병원이름, 지역
+    public Page<HospitalResponseDto> getHospitalsByNameAndSido(
+            String hospitalName,
+            String siDo){
+        Optional<List<Hospital>> optionalHospitals = hospitalRepository.findByNameAndSido(hospitalName,siDo);
+//        if(optionalHospitals.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
+
+        // currentPage, perPage 추가 구현
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id"));
+        Page<Hospital> hospitalPage = new PageImpl<>(
+                optionalHospitals.get(),
+                pageable,
+                optionalHospitals.get().size());
+
+        return hospitalPage.map(HospitalResponseDto::entityToDto);
+    }
+
+    //병원타입, 지역
+    public Page<HospitalResponseDto> getHospitalsByTypeAndSido(
             String hospitalType,
             String siDo){
-        Optional<List<Hospital>> optionalHospitals = hospitalRepository.findCriteria(hospitalName,hospitalType,siDo);
+        Optional<List<Hospital>> optionalHospitals = hospitalRepository.findByTypeAndSido(hospitalType,siDo);
+//        if(optionalHospitals.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
+
+        // currentPage, perPage 추가 구현
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id"));
+        Page<Hospital> hospitalPage = new PageImpl<>(
+                optionalHospitals.get(),
+                pageable,
+                optionalHospitals.get().size());
+
+        return hospitalPage.map(HospitalResponseDto::entityToDto);
+    }
+
+    //병원타입, 지역
+    public Page<HospitalResponseDto> getHospitalsByNameAndTypeAndSido(
+            String hospitalType,
+            String hospitalName,
+            String siDo){
+        Optional<List<Hospital>> optionalHospitals = hospitalRepository.findByNameAndTypeAndSido(hospitalType,siDo,hospitalName);
 //        if(optionalHospitals.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
 
         // currentPage, perPage 추가 구현
@@ -110,7 +161,6 @@ public class HospitalService {
             String hospitalName,
             String siDo
     ){
-
         //경우의 수 =>
         //1. 아무런 조건 없이 검색
         if(hospitalName == null && hospitalType == null && siDo == null){
@@ -129,11 +179,20 @@ public class HospitalService {
             return getHospitalByName(hospitalName);
         }
         //5. 병원타입 , 시도 조건 검색
-        //6. 병원타입 , 이름 조건 검색
-        //7. 이름, 시도 조건 검색
+        else if(hospitalName == null && hospitalType != null && siDo != null){
+            return getHospitalsByTypeAndSido(hospitalType,siDo);
+        }
+        //6. 병원타입 , 병원이름 조건 검색
+        else if(hospitalName != null && hospitalType != null && siDo == null){
+            return getHospitalsByNameAndType(hospitalName,hospitalType);
+        }
+        //7. 병원이름, 시도 조건 검색
+        else if(hospitalName != null && hospitalType == null && siDo != null){
+            return getHospitalsByNameAndSido(hospitalName,siDo);
+        }
+        //8. 모든조건을 다 넣었을때 검색
         else{
-            return getHospitalByCondition(hospitalName,hospitalType,siDo);
-//            return new PageImpl<>(new ArrayList<>());
+            return getHospitalsByNameAndTypeAndSido(hospitalType,hospitalName,siDo);
         }
     }
 }

@@ -42,7 +42,9 @@ public class HospitalController {
             @RequestParam(value = "siDo", required = false) String siDo
     ){
 
-        //페이지로 보여줄 것
+        if(hospitalName == "") hospitalName = null;
+        if(hospitalType == "") hospitalType = null;
+        if(siDo == "") siDo = null;
 
         Page<HospitalResponseDto> responseDtoPage =
                 hospitalService.getHospitals(hospitalType,hospitalName,siDo);
