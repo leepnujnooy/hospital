@@ -39,15 +39,17 @@ public class HospitalController {
     public ApiResponse<Page<HospitalResponseDto>> getHospitalFilteredByCondition(
             @RequestParam(value = "hospitalType", required = false) String hospitalType,
             @RequestParam(value = "hospitalName", required = false) String hospitalName,
-            @RequestParam(value = "siDo", required = false) String siDo
+            @RequestParam(value = "siDo", required = false) String siDo,
+            @RequestParam(value = "currentPage", defaultValue = "0") Integer currentPage,
+            @RequestParam(value = "perPage", defaultValue = "10") Integer perPage
     ){
-
+        log.info("요청 들어옴");
         if(hospitalName == "") hospitalName = null;
         if(hospitalType == "") hospitalType = null;
         if(siDo == "") siDo = null;
 
         Page<HospitalResponseDto> responseDtoPage =
-                hospitalService.getHospitals(hospitalType,hospitalName,siDo);
+                hospitalService.getHospitals(hospitalType,hospitalName,siDo,currentPage,perPage);
 
         return new ApiResponse<>(HttpStatus.OK,responseDtoPage);
     }
