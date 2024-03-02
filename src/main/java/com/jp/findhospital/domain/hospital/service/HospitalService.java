@@ -5,6 +5,7 @@ import com.jp.findhospital.domain.hospital.entity.Hospital;
 import com.jp.findhospital.domain.hospital.repository.HospitalRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,9 @@ public class HospitalService {
     }
 
     //병원 전체조회
-    public Page<HospitalResponseDto> getHospitalAllWithPaged(Integer currentPage, Integer perPage){
+    public Page<HospitalResponseDto> getHospitalAllWithPaged(
+            Integer currentPage,
+            Integer perPage){
 
         //페이지 request 를 정의
         Pageable pageable = PageRequest.of(currentPage, perPage, Sort.by("id"));
@@ -40,14 +43,20 @@ public class HospitalService {
     }
 
     //병원이름으로 조회
-    public Page<HospitalResponseDto> getHospitalByName(String hospitalName){
+    public Page<HospitalResponseDto> getHospitalByName(
+            String hospitalName,
+            Integer currentPage,
+            Integer perPage){
         Optional<List<Hospital>> optionalHospital = hospitalRepository.findByHospitalName(hospitalName);
 //        if(optionalHospital.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
 
+
+
         // currentPage, perPage 추가 구현
-        Pageable pageable = PageRequest.of(0, 10, Sort.by("id"));
+        Pageable pageable = PageRequest.of(currentPage, perPage, Sort.by("id"));
+
         Page<Hospital> hospitalPage = new PageImpl<>(
-                optionalHospital.get(),
+                optionalHospital.get().subList(currentPage,perPage),
                 pageable,
                 optionalHospital.get().size());
 
@@ -55,14 +64,17 @@ public class HospitalService {
     }
 
     //시도 병원 조회
-    public Page<HospitalResponseDto> getHospitalBySido(String siDo){
+    public Page<HospitalResponseDto> getHospitalBySido(
+            String siDo,
+            Integer currentPage,
+            Integer perPage){
         Optional<List<Hospital>> optionalHospitals = hospitalRepository.findBySiDo(siDo);
 //        if(optionalHospitals.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
 
         // currentPage, perPage 추가 구현
         Pageable pageable = PageRequest.of(0, 10, Sort.by("id"));
         Page<Hospital> hospitalPage = new PageImpl<>(
-                optionalHospitals.get(),
+                optionalHospitals.get().subList(currentPage,perPage),
                 pageable,
                 optionalHospitals.get().size());
 
@@ -71,14 +83,17 @@ public class HospitalService {
 
 
     //병원타입 필터만 거친 병원 조회
-    public Page<HospitalResponseDto> getHospitalByType(String hospitalType){
+    public Page<HospitalResponseDto> getHospitalByType(
+            String hospitalType,
+            Integer currentPage,
+            Integer perPage){
         Optional<List<Hospital>> optionalHospitals = hospitalRepository.findByHospitalType(hospitalType);
 //        if(optionalHospitals.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
 
         // currentPage, perPage 추가 구현
         Pageable pageable = PageRequest.of(0, 10, Sort.by("id"));
         Page<Hospital> hospitalPage = new PageImpl<>(
-                optionalHospitals.get(),
+                optionalHospitals.get().subList(currentPage,perPage),
                 pageable,
                 optionalHospitals.get().size());
 
@@ -88,14 +103,16 @@ public class HospitalService {
     //병원이름, 병원타입
     public Page<HospitalResponseDto> getHospitalsByNameAndType(
             String hospitalName,
-            String hospitalType){
+            String hospitalType,
+            Integer currentPage,
+            Integer perPage){
         Optional<List<Hospital>> optionalHospitals = hospitalRepository.findByNameAndType(hospitalName,hospitalType);
 //        if(optionalHospitals.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
 
         // currentPage, perPage 추가 구현
         Pageable pageable = PageRequest.of(0, 10, Sort.by("id"));
         Page<Hospital> hospitalPage = new PageImpl<>(
-                optionalHospitals.get(),
+                optionalHospitals.get().subList(currentPage,perPage),
                 pageable,
                 optionalHospitals.get().size());
 
@@ -105,14 +122,16 @@ public class HospitalService {
     //병원이름, 지역
     public Page<HospitalResponseDto> getHospitalsByNameAndSido(
             String hospitalName,
-            String siDo){
+            String siDo,
+            Integer currentPage,
+            Integer perPage){
         Optional<List<Hospital>> optionalHospitals = hospitalRepository.findByNameAndSido(hospitalName,siDo);
 //        if(optionalHospitals.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
 
         // currentPage, perPage 추가 구현
         Pageable pageable = PageRequest.of(0, 10, Sort.by("id"));
         Page<Hospital> hospitalPage = new PageImpl<>(
-                optionalHospitals.get(),
+                optionalHospitals.get().subList(currentPage,perPage),
                 pageable,
                 optionalHospitals.get().size());
 
@@ -122,14 +141,16 @@ public class HospitalService {
     //병원타입, 지역
     public Page<HospitalResponseDto> getHospitalsByTypeAndSido(
             String hospitalType,
-            String siDo){
+            String siDo,
+            Integer currentPage,
+            Integer perPage){
         Optional<List<Hospital>> optionalHospitals = hospitalRepository.findByTypeAndSido(hospitalType,siDo);
 //        if(optionalHospitals.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
 
         // currentPage, perPage 추가 구현
         Pageable pageable = PageRequest.of(0, 10, Sort.by("id"));
         Page<Hospital> hospitalPage = new PageImpl<>(
-                optionalHospitals.get(),
+                optionalHospitals.get().subList(currentPage,perPage),
                 pageable,
                 optionalHospitals.get().size());
 
@@ -140,14 +161,16 @@ public class HospitalService {
     public Page<HospitalResponseDto> getHospitalsByNameAndTypeAndSido(
             String hospitalType,
             String hospitalName,
-            String siDo){
+            String siDo,
+            Integer currentPage,
+            Integer perPage){
         Optional<List<Hospital>> optionalHospitals = hospitalRepository.findByNameAndTypeAndSido(hospitalType,siDo,hospitalName);
 //        if(optionalHospitals.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
 
         // currentPage, perPage 추가 구현
         Pageable pageable = PageRequest.of(0, 10, Sort.by("id"));
         Page<Hospital> hospitalPage = new PageImpl<>(
-                optionalHospitals.get(),
+                optionalHospitals.get().subList(currentPage,perPage),
                 pageable,
                 optionalHospitals.get().size());
 
@@ -156,43 +179,49 @@ public class HospitalService {
 
 
     //조회 후 조건에 맞는 병원리스트 간추리는 메서드
+    @Cacheable(value = "hospitals")
     public Page<HospitalResponseDto> getHospitals(
             String hospitalType,
             String hospitalName,
-            String siDo
+            String siDo,
+            Integer currentPage,
+            Integer perPage
     ){
         //경우의 수 =>
         //1. 아무런 조건 없이 검색
         if(hospitalName == null && hospitalType == null && siDo == null){
-            return getHospitalAllWithPaged(0,10);
+            log.info("getHospitalAll 메서드에 들어옴");
+            return getHospitalAllWithPaged(currentPage,perPage);
         }
         //2. 병원타입 조건만 검색
         else if(hospitalName == null && hospitalType != null && siDo == null){
-            return getHospitalByType(hospitalType);
+            log.info("getHospitalByType 메서드에 들어옴");
+            return getHospitalByType(hospitalType,currentPage,perPage);
         }
         //3. 시도 조건만 검색
         else if(hospitalName == null && hospitalType == null && siDo != null){
-            return getHospitalBySido(siDo);
+            log.info("getHospitalBySido 메서드에 들어옴");
+            return getHospitalBySido(siDo,currentPage,perPage);
         }
         //4. 이름 조건만 검색
         else if(hospitalName != null && hospitalType == null && siDo == null){
-            return getHospitalByName(hospitalName);
+            return getHospitalByName(hospitalName,currentPage,perPage);
         }
         //5. 병원타입 , 시도 조건 검색
         else if(hospitalName == null && hospitalType != null && siDo != null){
-            return getHospitalsByTypeAndSido(hospitalType,siDo);
+            return getHospitalsByTypeAndSido(hospitalType,siDo,currentPage,perPage);
         }
         //6. 병원타입 , 병원이름 조건 검색
         else if(hospitalName != null && hospitalType != null && siDo == null){
-            return getHospitalsByNameAndType(hospitalName,hospitalType);
+            return getHospitalsByNameAndType(hospitalName,hospitalType,currentPage,perPage);
         }
         //7. 병원이름, 시도 조건 검색
         else if(hospitalName != null && hospitalType == null && siDo != null){
-            return getHospitalsByNameAndSido(hospitalName,siDo);
+            return getHospitalsByNameAndSido(hospitalName,siDo,currentPage,perPage);
         }
         //8. 모든조건을 다 넣었을때 검색
         else{
-            return getHospitalsByNameAndTypeAndSido(hospitalType,hospitalName,siDo);
+            return getHospitalsByNameAndTypeAndSido(hospitalType,hospitalName,siDo,currentPage,perPage);
         }
     }
 }
