@@ -38,9 +38,9 @@ public class HospitalService {
         return HospitalResponseDto.entityToDto(optionalHospital.get());
     }
 
-    @CachePut(value = "hospitalIdCache", key = "#id", condition = "#result != null")
-    public HospitalResponseDto updateCache(Long id, HospitalResponseDto result){
-        return result;
+    @CachePut(value = "hospitalIdCache", key = "#id")
+    public HospitalResponseDto updateCache(Long id, HospitalResponseDto dto){
+        return dto;
     }
 
     //병원 전체조회

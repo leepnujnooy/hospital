@@ -58,7 +58,9 @@ public class HospitalController {
     //단일 병원 페이지 이동
     @GetMapping("/hospital/{id}")
     public ApiResponse<HospitalResponseDto> getHospital(@PathVariable("id") Long id){
-        return new ApiResponse<>(HttpStatus.OK,hospitalService.getHospitalById(id));
+        HospitalResponseDto dto = hospitalService.getHospitalById(id);
+        hospitalService.updateCache(id,dto);
+        return new ApiResponse<>(HttpStatus.OK,dto);
     }
 
 

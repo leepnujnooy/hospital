@@ -24,8 +24,10 @@ dependencies {
 
     //캐싱에 필요한 의존성 (ehcache 사용)
     implementation 'org.springframework.boot:spring-boot-starter-cache'
-    implementation 'org.ehcache:ehcache:3.9.0'
-    implementation 'javax.cache:cache-api:1.1.0'
+    implementation 'com.github.ben-manes.caffeine:caffeine'
+//    implementation 'org.ehcache:ehcache:3.9.0'
+//    implementation 'javax.cache:cache-api:1.1.0'
+//    implementation 'org.springframework:spring-context-support:5.3.9'
 
 
     //gradle 버전 문제로 인해 이거 두개를 다 써줘야함
