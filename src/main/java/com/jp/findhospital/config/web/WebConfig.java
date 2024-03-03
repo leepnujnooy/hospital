@@ -1,4 +1,4 @@
-package com.jp.findhospital.config;
+package com.jp.findhospital.config.web;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

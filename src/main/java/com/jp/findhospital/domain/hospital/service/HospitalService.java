@@ -5,6 +5,8 @@ import com.jp.findhospital.domain.hospital.entity.Hospital;
 import com.jp.findhospital.domain.hospital.repository.HospitalRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
@@ -21,13 +23,24 @@ import java.util.Optional;
 @Transactional(readOnly = true) //모든 메서드 단일 트랜잭션 내에서 수행, 읽기 전용 (수정 ㄴㄴ)
 public class HospitalService {
 
+    private final CacheManager cacheManager;
     private final HospitalRepository hospitalRepository;
 
+
     //id로 단일 병원 조회
+    //조회 할 때마다 조회수를 증가시킴 => 캐시에 저장후 3분마다 업데이트. 캐시초기화
+
+    @Cacheable(value = "hospitalIdCache", key = "#id")
+//    @CachePut(value = "hospitalIdCache", key = "#id")
     public HospitalResponseDto getHospitalById(Long id){
         Optional<Hospital> optionalHospital = hospitalRepository.findById(id);
         if(optionalHospital.isEmpty()) throw new RuntimeException("HOSPITAL DOESN'T EXISTS");
         return HospitalResponseDto.entityToDto(optionalHospital.get());
+    }
+
+    @CachePut(value = "hospitalIdCache", key = "#id", condition = "#result != null")
+    public HospitalResponseDto updateCache(Long id, HospitalResponseDto result){
+        return result;
     }
 
     //병원 전체조회
@@ -179,7 +192,9 @@ public class HospitalService {
 
 
     //조회 후 조건에 맞는 병원리스트 간추리는 메서드
-    @Cacheable(value = "hospitals")
+    @Cacheable(
+            value = "hospitalPageCache",
+            key = "#hospitalName + '-' + '-' + #hospitalType + '-' + #siDo")
     public Page<HospitalResponseDto> getHospitals(
             String hospitalType,
             String hospitalName,
