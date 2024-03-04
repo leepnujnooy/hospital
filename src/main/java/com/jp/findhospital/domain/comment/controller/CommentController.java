@@ -1,5 +1,6 @@
 package com.jp.findhospital.domain.comment.controller;
 
+import com.jp.findhospital.domain.comment.dto.CommentResponseDto;
 import com.jp.findhospital.domain.comment.dto.DeleteCommentRequestDto;
 import com.jp.findhospital.domain.comment.dto.SaveCommentRequestDto;
 import com.jp.findhospital.domain.comment.entity.Comment;
@@ -43,14 +44,14 @@ public class CommentController {
 
     //댓글 전체보기
     @GetMapping("/hospital/{hospitalId}/comment")
-    public ApiResponse<List<Comment>> getCommentAll(@PathVariable("hospitalId")Long id){
-        List<Comment> commentList = commentService.getCommentAll(id);
+    public ApiResponse<List<CommentResponseDto>> getCommentAll(@PathVariable("hospitalId")Long id){
+        List<CommentResponseDto> commentList = commentService.getCommentAll(id);
         return new ApiResponse<>(HttpStatus.OK,commentList);
     }
 
     //댓글 최신순으로 5개 불러오기
     @GetMapping("/recentcomment")
-    public ApiResponse<List<Comment>> getRecentComment(){
+    public ApiResponse<List<CommentResponseDto>> getRecentComment(){
         return new ApiResponse<>(HttpStatus.OK,commentService.getRecentComment());
     }
 

@@ -1,5 +1,6 @@
 package com.jp.findhospital.domain.comment.service;
 
+import com.jp.findhospital.domain.comment.dto.CommentResponseDto;
 import com.jp.findhospital.domain.comment.dto.DeleteCommentRequestDto;
 import com.jp.findhospital.domain.comment.dto.SaveCommentRequestDto;
 import com.jp.findhospital.domain.comment.entity.Comment;
@@ -37,7 +38,7 @@ public class CommentService {
 
         //병원점수 업데이트하기
         float newScore = commentDto.getScore();
-        List<Comment> commentList = getCommentAll(hospitalId);
+        List<Comment> commentList = commentRepository.findAllByHospitalId(hospitalId);
         //만약 댓글이 한개도 없다면 ==> 첫번째 점수
         if(commentList.isEmpty()){
             hospitalRepository.save(Hospital.builder()
@@ -112,16 +113,17 @@ public class CommentService {
 
 
     @Transactional(readOnly = true)
-    public List<Comment> getCommentAll(Long id){
+    public List<CommentResponseDto> getCommentAll(Long id){
         //hospitalId 로 찾기
         List<Comment> commentList = commentRepository.findAllByHospitalId(id);
-        return commentList;
+        return commentList.stream().map(CommentResponseDto::entityToDto).toList();
     }
 
-    public List<Comment> getRecentComment(){
+    @Transactional(readOnly = true)
+    public List<CommentResponseDto> getRecentComment(){
         List<Comment> commentList = commentRepository.findTop5ByOrderByDateTimeDesc();
         log.info(String.valueOf(commentList.size()));
-        return commentList;
+        return commentList.stream().map(CommentResponseDto::entityToDto).toList();
     }
 
 }

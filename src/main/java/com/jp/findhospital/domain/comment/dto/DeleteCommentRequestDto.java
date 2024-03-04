@@ -9,7 +9,7 @@ import lombok.Setter;
 @Builder
 public class DeleteCommentRequestDto {
 
-    private Long hospitalId;
+//    private Long hospitalId;
     private String password;
 
 }
