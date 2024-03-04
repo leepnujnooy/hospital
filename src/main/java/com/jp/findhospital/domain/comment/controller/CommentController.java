@@ -1,5 +1,6 @@
 package com.jp.findhospital.domain.comment.controller;
 
+import com.jp.findhospital.domain.comment.dto.DeleteCommentRequestDto;
 import com.jp.findhospital.domain.comment.dto.SaveCommentRequestDto;
 import com.jp.findhospital.domain.comment.entity.Comment;
 import com.jp.findhospital.domain.comment.service.CommentService;
@@ -25,15 +26,18 @@ public class CommentController {
     public ApiResponse<ResponseDto> createComment(
             @PathVariable("hospitalId") Long hospitalId,
             @RequestBody SaveCommentRequestDto saveCommentRequestDto){
-
-        //댓글 저장
         commentService.saveComment(hospitalId,saveCommentRequestDto);
+        return new ApiResponse<>(HttpStatus.OK,ResponseDto.builder().message("리뷰 등록완료").build());
+    }
 
-        //응답 리턴
-        ResponseDto responseDto = new ResponseDto();
-        responseDto.setMessage("댓글 작성 완료");
-
-        return new ApiResponse<>(HttpStatus.OK,responseDto);
+    //댓글 삭제
+    @DeleteMapping("/hospital/{hospitalId}/comment/{commentId}")
+    public ApiResponse<ResponseDto> deleteComment(
+            @PathVariable("hospitalId") Long hospitalId,
+            @PathVariable("commentId") Long commentId,
+            DeleteCommentRequestDto dto){
+        commentService.deleteComment(hospitalId,commentId, dto.getPassword());
+        return new ApiResponse<>(HttpStatus.OK,ResponseDto.builder().message("리뷰 삭제완료").build());
     }
 
     //댓글 전체보기

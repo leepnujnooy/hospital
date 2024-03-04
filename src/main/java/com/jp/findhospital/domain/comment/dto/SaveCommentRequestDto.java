@@ -11,5 +11,6 @@ import lombok.Setter;
 public class SaveCommentRequestDto {
     private Long hospitalId;
     private String text;
+    private String password;
     private Integer score;
 }

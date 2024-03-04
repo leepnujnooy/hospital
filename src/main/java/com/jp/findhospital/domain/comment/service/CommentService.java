@@ -7,6 +7,7 @@ import com.jp.findhospital.domain.hospital.entity.Hospital;
 import com.jp.findhospital.domain.hospital.repository.HospitalRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final HospitalRepository hospitalRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Transactional
@@ -84,8 +86,28 @@ public class CommentService {
                 .hospital(hospital)
                 .score(commentDto.getScore())
                 .dateTime(LocalDateTime.now())
+                .password(passwordEncoder.encode(commentDto.getPassword()))
                 .build());
 
+    }
+
+    public void deleteComment(Long hospitalId,Long commentId, String password){
+        //병원 id 존재유무
+        Hospital hospital = hospitalRepository.findById(hospitalId)
+                .orElseThrow(RuntimeException::new);
+
+        //코멘트 id 존재유무
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(RuntimeException::new);
+
+        //패스워드 일치유무
+        //일치할 경우
+        if(passwordEncoder.matches(password, comment.getPassword())){
+            commentRepository.delete(comment);
+        }
+        else{
+            throw new RuntimeException();
+        }
     }
 
 
