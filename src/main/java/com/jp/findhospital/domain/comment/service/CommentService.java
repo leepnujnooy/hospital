@@ -1,5 +1,6 @@
 package com.jp.findhospital.domain.comment.service;
 
+import com.jp.findhospital.domain.comment.dto.DeleteCommentRequestDto;
 import com.jp.findhospital.domain.comment.dto.SaveCommentRequestDto;
 import com.jp.findhospital.domain.comment.entity.Comment;
 import com.jp.findhospital.domain.comment.repository.CommentRepository;
@@ -33,7 +34,6 @@ public class CommentService {
 
         //댓글위치 == 병원위치 다르면 예외처리
         if(!hospitalId.equals(commentDto.getHospitalId())) throw new RuntimeException();
-
 
         //병원점수 업데이트하기
         float newScore = commentDto.getScore();
@@ -79,7 +79,6 @@ public class CommentService {
                     .build()
             );
         }
-
         //저장
         commentRepository.save(Comment.builder()
                 .text(commentDto.getText())
@@ -88,10 +87,10 @@ public class CommentService {
                 .dateTime(LocalDateTime.now())
                 .password(passwordEncoder.encode(commentDto.getPassword()))
                 .build());
-
     }
 
-    public void deleteComment(Long hospitalId,Long commentId, String password){
+    public void deleteComment(Long hospitalId, Long commentId, DeleteCommentRequestDto dto){
+        log.info("deleteComment 메서드 실행");
         //병원 id 존재유무
         Hospital hospital = hospitalRepository.findById(hospitalId)
                 .orElseThrow(RuntimeException::new);
@@ -102,8 +101,9 @@ public class CommentService {
 
         //패스워드 일치유무
         //일치할 경우
-        if(passwordEncoder.matches(password, comment.getPassword())){
+        if(passwordEncoder.matches(dto.getPassword(), comment.getPassword())){
             commentRepository.delete(comment);
+//            commentRepository.deleteById(commentId);
         }
         else{
             throw new RuntimeException();
@@ -115,6 +115,12 @@ public class CommentService {
     public List<Comment> getCommentAll(Long id){
         //hospitalId 로 찾기
         List<Comment> commentList = commentRepository.findAllByHospitalId(id);
+        return commentList;
+    }
+
+    public List<Comment> getRecentComment(){
+        List<Comment> commentList = commentRepository.findTop5ByOrderByDateTimeDesc();
+        log.info(String.valueOf(commentList.size()));
         return commentList;
     }
 

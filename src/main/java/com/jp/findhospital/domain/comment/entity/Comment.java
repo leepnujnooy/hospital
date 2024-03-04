@@ -35,7 +35,8 @@ public class Comment {
 
     //comment 검색시 hospital 은 나오지않게 ignore
     @JsonIgnore
-    @ManyToOne(cascade = CascadeType.REMOVE)
+//    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     @JoinColumn(name = "hospital_id")
     private Hospital hospital;
 }

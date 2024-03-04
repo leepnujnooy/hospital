@@ -35,8 +35,9 @@ public class CommentController {
     public ApiResponse<ResponseDto> deleteComment(
             @PathVariable("hospitalId") Long hospitalId,
             @PathVariable("commentId") Long commentId,
-            DeleteCommentRequestDto dto){
-        commentService.deleteComment(hospitalId,commentId, dto.getPassword());
+            @RequestBody DeleteCommentRequestDto dto){
+        log.info("리뷰 삭제요청");
+        commentService.deleteComment(hospitalId,commentId, dto);
         return new ApiResponse<>(HttpStatus.OK,ResponseDto.builder().message("리뷰 삭제완료").build());
     }
 
@@ -46,5 +47,12 @@ public class CommentController {
         List<Comment> commentList = commentService.getCommentAll(id);
         return new ApiResponse<>(HttpStatus.OK,commentList);
     }
+
+    //댓글 최신순으로 5개 불러오기
+    @GetMapping("/recentcomment")
+    public ApiResponse<List<Comment>> getRecentComment(){
+        return new ApiResponse<>(HttpStatus.OK,commentService.getRecentComment());
+    }
+
 
 }
