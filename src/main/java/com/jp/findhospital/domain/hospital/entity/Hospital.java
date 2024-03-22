@@ -2,7 +2,7 @@ package com.jp.findhospital.domain.hospital.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jp.findhospital.domain.comment.entity.Comment;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import lombok.*;
 
 import java.util.ArrayList;

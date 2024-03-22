@@ -1,7 +1,7 @@
 package com.jp.findhospital.global.dto;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
+//import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
 //ResponseEntity 구현체 
