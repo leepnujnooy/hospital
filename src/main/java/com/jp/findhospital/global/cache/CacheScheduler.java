@@ -25,7 +25,8 @@ public class CacheScheduler {
     private final HospitalRepository hospitalRepository;
 
 
-    @Scheduled(fixedDelay = 1800) //3분마다 처리
+    //IdCache 에 저장된 조회수 DB 업데이트
+    @Scheduled(fixedDelay = 180000) //3분마다 처리
     public void updateHits(){
         Cache cache = cacheManager.getCache("hospitalIdCache");
 
