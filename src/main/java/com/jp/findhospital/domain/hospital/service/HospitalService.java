@@ -38,6 +38,27 @@ public class HospitalService {
         return HospitalResponseDto.entityToDto(optionalHospital.get());
     }
 
+    public HospitalResponseDto getHospitalByIdNoCache(Long id){
+        Hospital hospital = hospitalRepository.findById(id).orElseThrow();
+        hospitalRepository.save(Hospital.builder()
+                .id(hospital.getId())
+                .x(hospital.getY())
+                .y(hospital.getY())
+                .commentList(hospital.getCommentList())
+                .gunGu(hospital.getGunGu())
+                .hits(hospital.getHits()+1)
+                .siDo(hospital.getSiDo())
+                .hospitalPhoneNumber(hospital.getHospitalPhoneNumber())
+                .hospitalName(hospital.getHospitalName())
+                .score(hospital.getScore())
+                .address(hospital.getAddress())
+                .hospitalType(hospital.getHospitalType())
+                .hospitalStartDate(hospital.getHospitalStartDate())
+                .mailNumber(hospital.getMailNumber())
+                .build());
+        return HospitalResponseDto.entityToDto(hospital);
+    }
+
     @CachePut(value = "hospitalIdCache", key = "#id")
     public HospitalResponseDto updateCache(Long id, HospitalResponseDto dto){
         return dto;
@@ -253,9 +274,9 @@ public class HospitalService {
 
 
     //조회 후 조건에 맞는 병원리스트 간추리는 메서드
-    @Cacheable(
-            value = "hospitalPageCache",
-            key = "#hospitalName + '-' + '-' + #hospitalType + '-' + #siDo")
+//    @Cacheable(
+//            value = "hospitalPageCache",
+//            key = "#hospitalName + '-' + '-' + #hospitalType + '-' + #siDo")
     public List<HospitalResponseDto> getHospitals(
             String hospitalType,
             String hospitalName,
@@ -268,12 +289,10 @@ public class HospitalService {
         }
         //2. 병원타입 조건만 검색
         else if(hospitalName == null && hospitalType != null && siDo == null){
-            log.info("getHospitalByType 메서드에 들어옴");
             return getHospitalByType(hospitalType);
         }
         //3. 시도 조건만 검색
         else if(hospitalName == null && hospitalType == null && siDo != null){
-            log.info("getHospitalBySido 메서드에 들어옴");
             return getHospitalBySido(siDo);
         }
         //4. 이름 조건만 검색
